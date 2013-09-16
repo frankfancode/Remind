@@ -2,18 +2,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-<TextView
-    android:id="@+id/destination"
-    android:layout_width="match_parent" 
-    android:layout_height="wrap_content"
-    android:text="@string/target"
-    /> 
+
+    <TextView
+        android:id="@+id/destination"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/target" />
+
     <fragment
         android:id="@+id/map"
-        class="com.amap.api.maps.SupportMapFragment"
-        android:layout_below="@id/destination"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    
+        android:layout_height="match_parent"
+        android:layout_below="@id/destination"
+        class="com.amap.api.maps.SupportMapFragment" />
+
+    <Button
+        android:id="@+id/selectDestination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/map"
+        android:layout_marginTop="63dp"
+        android:background="@drawable/destination" />
 
 </RelativeLayout>

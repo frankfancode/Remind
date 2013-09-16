@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="app_name">Remind</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="omenu_settings">settings</string>
+    <string name="omenu_signout">logout</string>
+    <string name="omenu_exit">exit</string>
+    <string name="volume">volume</string>
+    <string name="vibrate">vibrate</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="START">START</string>
+    <string name="Location">Location</string>
+    <string name="selectDestination">select destination</string>
+    <string name="title_activity_arrive_alarm">ArriveAlarmActivity</string>
     <string name="alpha">Alpha</string>
     <string name="animate">Animate</string>
     <string name="basic_map">Basic Map</string>
@@ -9,7 +23,6 @@
     <string name="camera_description">Demonstrates camera functions.</string>
     <string name="clear_map">Clear</string>
     <string name="compass">Compass</string>
-    
     <string name="Rotate">Rotate</string>
     <string name="custom_info_contents">Custom info contents</string>
     <string name="custom_info_window">Custom info window</string>
@@ -90,7 +103,7 @@
     <string name="poisearch_description">Demonstrates how to poisearch to a map.</string>
     <string name="offlinemap_demo">offlinemap</string>
     <string name="offlinemap_description">Demonstrates how to use offlinemap.</string>
-     <string name="mapview_demo">mapview</string>
+    <string name="mapview_demo">mapview</string>
     <string name="mapview_description">Demonstrates how to use mapview.</string>
     <string name="search_title">poisearch  key</string>
     <string name="up_arrow">\u2191</string>
@@ -107,13 +120,12 @@
     <string name="pause">"pause"</string>
     <string name="stop">"stop"</string>
     <string name="remove">"remove"</string>
-    
     <string name="logo_position">LogoPosition</string>
     <string name="bottom_left">BottomLeft</string>
     <string name="bottom_center">BottomCenter</string>
     <string name="bottom_right">BottomRight</string>
     <string name="map_screenshot">MapScreenshot</string>
     <string name="get_scale">GetScale</string>
-
     <string name="target">select target</string>
+
 </resources>

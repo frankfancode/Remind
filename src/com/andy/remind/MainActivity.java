@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +38,6 @@ import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.search.core.AMapException;
 import com.amap.api.search.geocoder.Geocoder;
 import com.andy.remind.util.AMapUtil;
-import com.andy.remind.util.ToastUtil;
 
 public class MainActivity extends FragmentActivity implements LocationSource,
 		AMapLocationListener, OnMapClickListener, OnMarkerClickListener,
@@ -48,10 +48,10 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 	private static final int OPTIONS_MENU_ID_PREFERENCES = 2;
 	protected static final int OPTIONS_MENU_ID_EXIT = 13;
 	public static final String START_ALARM = "com.andy.remind.START_ALARM";
-	private TextView destinationView = null;
+	private Button destinationButton = null;
 	private AMap aMap;
 	private OnLocationChangedListener mListener;
-
+	int distance=0;
 	public AMapLocation currentLocation = null;
 	public LatLng targetLatLng = null;
 
@@ -71,8 +71,8 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		setTitle(titleLable);
 		init();
 		geocoder = new Geocoder(this);
-		destinationView = (TextView) findViewById(R.id.destination);
-		destinationView.setOnClickListener(new OnClickListener() {
+		destinationButton = (Button) findViewById(R.id.selectDestination);
+		destinationButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -105,7 +105,8 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		myLocationStyle.strokeColor(Color.BLUE);
 		myLocationStyle.strokeWidth(1);
 		aMap.setMyLocationStyle(myLocationStyle);
-		mAMapLocationManager = LocationManagerProxy.getInstance(MainActivity.this);
+		mAMapLocationManager = LocationManagerProxy
+				.getInstance(MainActivity.this);
 		aMap.setLocationSource(this);
 		aMap.setMyLocationEnabled(true);// 设置为true表示系统定位按钮显示并响应点击，false表示隐藏，默认是false
 		aMap.getUiSettings().setZoomControlsEnabled(true);// 设置系统默认缩放按钮可见
@@ -130,9 +131,13 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		// Location API定位采用GPS和网络混合定位方式，时间最短是5000毫秒
 		mAMapLocationManager.requestLocationUpdates(
 				LocationProviderProxy.AMapNetwork, 5000, 10, this);
+		Toast.makeText(MainActivity.this, "正在定位...", Toast.LENGTH_SHORT).show();
 
 	}
 
+	/**
+	 * 取消定位
+	 */
 	@Override
 	public void deactivate() {
 		mListener = null;
@@ -168,8 +173,10 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		if (mListener != null) {
 			mListener.onLocationChanged(aLocation);
 		}
-
-		Log.i(TAG, "change");
+		distance = (int)getDistance(new LatLng(currentLocation.getLatitude(),
+				currentLocation.getLongitude()), targetLatLng);
+		//ToastUtil.show(MainActivity.this, "当前位置距目的地" + (int) distance + "米");
+		Log.i(TAG, "距离：" + distance);
 	}
 
 	@Override
@@ -189,6 +196,7 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		targetMarker.showInfoWindow();
 
 	}
+
 	@Override
 	public void onInfoWindowClick(Marker marker) {
 		// TODO Auto-generated method stub
@@ -199,13 +207,11 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 			mAMapLocationManager.addProximityAlert(targetLatLng.latitude,
 					targetLatLng.longitude, 10000 * radius, -1,
 					startAlarmPendingInetent);
-			destinationView.setText("目的地：" + targetName);
+			Toast.makeText(MainActivity.this, "目的地：" + targetName, Toast.LENGTH_LONG).show();
 		}
 		releaseListener();
 		targetMarker.hideInfoWindow();
-		double distance=getDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), targetLatLng);
-		ToastUtil.show(MainActivity.this, "目的地距当前位置"+(int)distance+"米");
-		Log.i(TAG, "距离："+distance);
+		
 	}
 
 	private void registerListener() {
@@ -276,9 +282,15 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 	// 方法
 	public double getDistance(LatLng latlng1, LatLng latlng2) {
 		float[] results = new float[1];
-		Location.distanceBetween(latlng1.latitude, latlng1.longitude,latlng2.latitude, latlng2.longitude, results);
+		if(null==latlng1||null==latlng2){
+			return -1f;
+		}
+		
+		Location.distanceBetween(latlng1.latitude, latlng1.longitude,
+				latlng2.latitude, latlng2.longitude, results);
 		return results[0];
 	}
+
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
@@ -286,7 +298,6 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		deactivate();
 	}
 
-	
 	/**
 	 * 1像素代表多少米
 	 */
@@ -339,5 +350,4 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		return super.onOptionsItemSelected(item);
 	}
 
-	
 }
