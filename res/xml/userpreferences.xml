@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
-  <CheckBoxPreference
-    android:key="PREF_VIBRATE"
-    android:title="VIBRATE"
-    android:summary="Select to turn on automatic updating"
-    android:defaultValue="true"
-  />
-  
-  <RingtonePreference
-    android:key="PREF_RINGTONE"
-    android:title="RINGTONE"
-    android:summary="RINGTONE"
-    android:defaultValue="true"
-    android:ringtoneType="all"
-    android:showDefault="true"
-    android:showSilent="false"
-    
-  />
-  <com.andy.remind.SeekBarPreference
-    android:key="PREF_VOLUME"
-        android:title="VOLUME"
-        android:dialogTitle="VOLUME"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="PREF_VIBRATE"
+        android:summary="Select to turn on automatic updating"
+        android:title="VIBRATE" />
+
+    <RingtonePreference
+        android:defaultValue="true"
+        android:key="PREF_RINGTONE"
+        android:ringtoneType="all"
+        android:showDefault="true"
+        android:showSilent="false"
+        android:summary="RINGTONE"
+        android:title="RINGTONE" />
+
+    <com.andy.remind.SeekBarPreference
         android:dialogLayout="@layout/setting_widthseekbar"
-        android:persistent="true"/>
+        android:dialogTitle="VOLUME"
+        android:key="PREF_VOLUME"
+        android:persistent="true"
+        android:title="VOLUME" />
+
+    <Preference
+        android:key="button"
+        android:title="Rimind Distance" />
+
 </PreferenceScreen>
