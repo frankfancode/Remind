@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -28,9 +27,11 @@ import com.amap.api.maps.AMap.InfoWindowAdapter;
 import com.amap.api.maps.AMap.OnInfoWindowClickListener;
 import com.amap.api.maps.AMap.OnMapClickListener;
 import com.amap.api.maps.AMap.OnMarkerClickListener;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.SupportMapFragment;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
@@ -48,13 +49,16 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 	private static final int OPTIONS_MENU_ID_PREFERENCES = 2;
 	protected static final int OPTIONS_MENU_ID_EXIT = 13;
 	public static final String START_ALARM = "com.andy.remind.START_ALARM";
+	protected static  boolean FIRST_LOCATION = true;
 	private Button destinationButton = null;
 	private AMap aMap;
 	private OnLocationChangedListener mListener;
 	int distance=0;
 	public AMapLocation currentLocation = null;
+	public LatLng currentLatLng = null;
 	public LatLng targetLatLng = null;
-
+	
+	
 	private LocationManagerProxy mAMapLocationManager;
 	private Geocoder geocoder;
 	private String targetName;
@@ -70,6 +74,7 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		CharSequence titleLable = "REMINDER";
 		setTitle(titleLable);
 		init();
+
 		geocoder = new Geocoder(this);
 		destinationButton = (Button) findViewById(R.id.selectDestination);
 		destinationButton.setOnClickListener(new OnClickListener() {
@@ -88,8 +93,8 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 	 */
 	private void init() {
 		if (aMap == null) {
-			aMap = ((SupportMapFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.map)).getMap();
+			android.support.v4.app.FragmentManager myFM = getSupportFragmentManager();
+			aMap = ((SupportMapFragment) myFM.findFragmentById(R.id.map)).getMap();
 			if (AMapUtil.checkReady(this, aMap)) {
 				setUpMap();
 			}
@@ -111,7 +116,9 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		aMap.setMyLocationEnabled(true);// 设置为true表示系统定位按钮显示并响应点击，false表示隐藏，默认是false
 		aMap.getUiSettings().setZoomControlsEnabled(true);// 设置系统默认缩放按钮可见
 		aMap.getUiSettings().setScaleControlsEnabled(true);
-		aMap.setMyLocationEnabled(true);
+		//aMap.getUiSettings().set
+		
+		
 	}
 
 	/**
@@ -132,6 +139,7 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		mAMapLocationManager.requestLocationUpdates(
 				LocationProviderProxy.AMapNetwork, 5000, 10, this);
 		Toast.makeText(MainActivity.this, "正在定位...", Toast.LENGTH_SHORT).show();
+		
 
 	}
 
@@ -170,6 +178,7 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 	@Override
 	public void onLocationChanged(AMapLocation aLocation) {
 		currentLocation = aLocation;
+		currentLatLng=new LatLng(aLocation.getLatitude(), aLocation.getLongitude());
 		if (mListener != null) {
 			mListener.onLocationChanged(aLocation);
 		}
@@ -177,6 +186,13 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 				currentLocation.getLongitude()), targetLatLng);
 		//ToastUtil.show(MainActivity.this, "当前位置距目的地" + (int) distance + "米");
 		Log.i(TAG, "距离：" + distance);
+		if(true==FIRST_LOCATION)
+		{
+		CameraPosition currentPosition = new CameraPosition.Builder()
+		.target(currentLatLng).zoom(13).bearing(0).tilt(0)
+		.build();
+		aMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPosition));
+		}
 	}
 
 	@Override

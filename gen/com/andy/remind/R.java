@@ -62,20 +62,19 @@ public final class R {
         public static final int pre_down_=0x7f020023;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a000d;
-        public static final int cancelButton=0x7f0a000a;
-        public static final int destination=0x7f0a0000;
-        public static final int map=0x7f0a0001;
-        public static final int okButton=0x7f0a000b;
-        public static final int popdown=0x7f0a0006;
-        public static final int popinfo=0x7f0a0004;
-        public static final int popleft=0x7f0a0003;
-        public static final int popright=0x7f0a0007;
-        public static final int seekBar1=0x7f0a000c;
-        public static final int selectDestination=0x7f0a0002;
-        public static final int textcache=0x7f0a0005;
-        public static final int vibrate=0x7f0a0009;
-        public static final int volume=0x7f0a0008;
+        public static final int action_settings=0x7f0a000c;
+        public static final int cancelButton=0x7f0a0009;
+        public static final int map=0x7f0a0000;
+        public static final int okButton=0x7f0a000a;
+        public static final int popdown=0x7f0a0005;
+        public static final int popinfo=0x7f0a0003;
+        public static final int popleft=0x7f0a0002;
+        public static final int popright=0x7f0a0006;
+        public static final int seekBar1=0x7f0a000b;
+        public static final int selectDestination=0x7f0a0001;
+        public static final int textcache=0x7f0a0004;
+        public static final int vibrate=0x7f0a0008;
+        public static final int volume=0x7f0a0007;
     }
     public static final class layout {
         public static final int activity_arrive_alarm=0x7f030000;
