@@ -59,9 +59,8 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 	private OnLocationChangedListener mListener;
 	int distance = 0;
 	public AMapLocation currentLocation = null;
-	private LatLng tmpTargetLatLng=null;
-	
-	
+	private LatLng tmpTargetLatLng = null;
+
 	private LocationManagerProxy mAMapLocationManager;
 	private Geocoder geocoder;
 	private String targetName;
@@ -121,6 +120,11 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		aMap.getUiSettings().setZoomControlsEnabled(true);// 设置系统默认缩放按钮可见
 		aMap.getUiSettings().setScaleControlsEnabled(true);
 		// aMap.getUiSettings().set
+		CameraPosition currentPosition = new CameraPosition.Builder()
+				.target(new LatLng(37.5423,121.393)).zoom(14).bearing(0).tilt(0)
+				.build();
+		aMap.animateCamera(CameraUpdateFactory
+				.newCameraPosition(currentPosition));
 	}
 
 	/**
@@ -138,7 +142,7 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		 * 1.0.2版本新增方法，设置true表示混合定位中包含gps定位，false表示纯网络定位，默认是true
 		 */
 		// Location API定位采用GPS和网络混合定位方式，时间最短是5000毫秒
-		
+
 		mAMapLocationManager.requestLocationUpdates(
 				LocationProviderProxy.AMapNetwork, 5000, 10, this);
 		if (true == FIRST_LOCATION) {
@@ -184,32 +188,35 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 	public void onLocationChanged(AMapLocation aLocation) {
 		Log.i(TAG, "MainActivityonLocationChanged");
 		currentLocation = aLocation;
-		Declare.setCurrentLatlng(new LatLng(aLocation.getLatitude(),
-				aLocation.getLongitude()));
-		
+		Declare.setCurrentLatlng(new LatLng(aLocation.getLatitude(), aLocation
+				.getLongitude()));
+
 		if (mListener != null) {
 			mListener.onLocationChanged(aLocation);
 		}
-//		distance = (int) AMapUtil.getDistance(
-//				new LatLng(currentLocation.getLatitude(), currentLocation
-//						.getLongitude()), targetLatLng);
-//		// ToastUtil.show(MainActivity.this, "当前位置距目的地" + (int) distance + "米");
-//		Log.i(TAG, "距离：" + distance + " " + isonMapLoaded);
-//		SharedPreferences mPrefs = PreferenceManager
-//				.getDefaultSharedPreferences(MainActivity.this);
-//		int prefsDistance = Integer.parseInt(mPrefs.getString("PREF_DISTANCE",
-//				"0"));
-//		Log.i(TAG, prefsDistance + "");
-//		if (distance > 0 && distance < prefsDistance) {
-//			new AlertDialog.Builder(this).setTitle("请输入")
-//					.setIcon(android.R.drawable.ic_dialog_info)
-//					.setView(new EditText(this)).setPositiveButton("确定", null)
-//					.setNegativeButton("取消", null).show();
-//		}
+		// distance = (int) AMapUtil.getDistance(
+		// new LatLng(currentLocation.getLatitude(), currentLocation
+		// .getLongitude()), targetLatLng);
+		// // ToastUtil.show(MainActivity.this, "当前位置距目的地" + (int) distance +
+		// "米");
+		// Log.i(TAG, "距离：" + distance + " " + isonMapLoaded);
+		// SharedPreferences mPrefs = PreferenceManager
+		// .getDefaultSharedPreferences(MainActivity.this);
+		// int prefsDistance =
+		// Integer.parseInt(mPrefs.getString("PREF_DISTANCE",
+		// "0"));
+		// Log.i(TAG, prefsDistance + "");
+		// if (distance > 0 && distance < prefsDistance) {
+		// new AlertDialog.Builder(this).setTitle("请输入")
+		// .setIcon(android.R.drawable.ic_dialog_info)
+		// .setView(new EditText(this)).setPositiveButton("确定", null)
+		// .setNegativeButton("取消", null).show();
+		// }
 		if (true == FIRST_LOCATION) {
-			Log.i(TAG, "FIRST_LOCATION"+FIRST_LOCATION);
+			Log.i(TAG, "FIRST_LOCATION" + FIRST_LOCATION);
 			CameraPosition currentPosition = new CameraPosition.Builder()
-					.target(Declare.getCurrentLatlng()).zoom(14).bearing(0).tilt(0).build();
+					.target(Declare.getCurrentLatlng()).zoom(14).bearing(0)
+					.tilt(0).build();
 			aMap.animateCamera(CameraUpdateFactory
 					.newCameraPosition(currentPosition));
 			FIRST_LOCATION = false;
@@ -242,9 +249,9 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		// TODO Auto-generated method stub
 
 		if (targetMarker.equals(marker)) {
-			
+
 			Declare.setTargetLatlng(tmpTargetLatLng);
-			Log.i(TAG, "onInfoWindowClick "+tmpTargetLatLng.toString());
+			Log.i(TAG, "onInfoWindowClick " + tmpTargetLatLng.toString());
 			getAddress(tmpTargetLatLng.latitude, tmpTargetLatLng.longitude);
 			distance = (int) AMapUtil.getDistance(
 					new LatLng(currentLocation.getLatitude(), currentLocation
@@ -394,19 +401,20 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 
 	private void startLocationService() {
 		Log.d(TAG, "start alarm");
-		//Intent i = new Intent("com.andy.remind.START_TRACK_SERVICE");
-        //startService(i);
-        
-//		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//		Intent collectIntent = new Intent(this, LocationService.class);
-//		PendingIntent collectSender = PendingIntent.getService(this, 0,
-//				collectIntent, 0);
-//		am.cancel(collectSender);
-//		am.setRepeating(AlarmManager.ELAPSED_REALTIME,
-//				SystemClock.elapsedRealtime(), 10 * 1000, collectSender);
-		Intent intent=new Intent(this,LocationService.class);
-        startService(intent);
-        
+		// Intent i = new Intent("com.andy.remind.START_TRACK_SERVICE");
+		// startService(i);
+
+		// AlarmManager am = (AlarmManager)
+		// getSystemService(Context.ALARM_SERVICE);
+		// Intent collectIntent = new Intent(this, LocationService.class);
+		// PendingIntent collectSender = PendingIntent.getService(this, 0,
+		// collectIntent, 0);
+		// am.cancel(collectSender);
+		// am.setRepeating(AlarmManager.ELAPSED_REALTIME,
+		// SystemClock.elapsedRealtime(), 10 * 1000, collectSender);
+		Intent intent = new Intent(this, LocationService.class);
+		startService(intent);
+
 	}
 
 }

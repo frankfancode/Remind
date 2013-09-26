@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    
+    <EditTextPreference
+        android:defaultValue="烟台"
+        android:key="PREF_CITY"
+        android:summary="Where you are in"
+        android:title="CITY" 
+        />
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="PREF_VIBRATE"
