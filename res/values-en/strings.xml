@@ -127,5 +127,9 @@
     <string name="map_screenshot">MapScreenshot</string>
     <string name="get_scale">GetScale</string>
     <string name="target">select target</string>
+    
+    <string name="alarmText">Arrive Station</string>
+    <string name="ISee">I see</string>
+    
 
 </resources>

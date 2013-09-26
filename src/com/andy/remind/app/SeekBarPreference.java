@@ -1,4 +1,4 @@
-package com.andy.remind;
+package com.andy.remind.app;
 
 import android.content.Context;
 import android.os.Bundle;

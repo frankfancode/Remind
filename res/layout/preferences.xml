@@ -22,6 +22,12 @@
         android:layout_height="wrap_content"
         android:text="@string/vibrate" />
 
+    <Button
+        android:id="@+id/remind_distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
     <CheckBox
         android:id="@+id/vibrate"
         android:layout_width="wrap_content"

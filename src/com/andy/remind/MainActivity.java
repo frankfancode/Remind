@@ -26,6 +26,7 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMap.InfoWindowAdapter;
 import com.amap.api.maps.AMap.OnInfoWindowClickListener;
 import com.amap.api.maps.AMap.OnMapClickListener;
+import com.amap.api.maps.AMap.OnMapLoadedListener;
 import com.amap.api.maps.AMap.OnMarkerClickListener;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
@@ -38,25 +39,27 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.search.core.AMapException;
 import com.amap.api.search.geocoder.Geocoder;
+import com.andy.remind.app.FragmentPreferences;
+import com.andy.remind.app.PreferencesActivity;
+import com.andy.remind.service.LocationService;
 import com.andy.remind.util.AMapUtil;
 
 public class MainActivity extends FragmentActivity implements LocationSource,
 		AMapLocationListener, OnMapClickListener, OnMarkerClickListener,
-		OnInfoWindowClickListener, InfoWindowAdapter {
-
-	public static String TAG = "com.andy.remind";
+		OnInfoWindowClickListener, InfoWindowAdapter, OnMapLoadedListener {
+	public static String TAG = Declare.getTag();
 	private static final int OPTIONS_MENU_ID_LOGOUT = 1;
 	private static final int OPTIONS_MENU_ID_PREFERENCES = 2;
 	protected static final int OPTIONS_MENU_ID_EXIT = 13;
 	public static final String START_ALARM = "com.andy.remind.START_ALARM";
-	protected static  boolean FIRST_LOCATION = true;
+	protected static boolean FIRST_LOCATION = true;
+	private boolean isonMapLoaded = false;
 	private Button destinationButton = null;
 	private AMap aMap;
 	private OnLocationChangedListener mListener;
-	int distance=0;
+	int distance = 0;
 	public AMapLocation currentLocation = null;
-	public LatLng currentLatLng = null;
-	public LatLng targetLatLng = null;
+	private LatLng tmpTargetLatLng=null;
 	
 	
 	private LocationManagerProxy mAMapLocationManager;
@@ -81,7 +84,7 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 
 			@Override
 			public void onClick(View v) {
-				showToast("在地图上点击您的起点");
+				showToast("在地图上点击您的目的地");
 				registerListener();
 			}
 		});
@@ -94,7 +97,8 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 	private void init() {
 		if (aMap == null) {
 			android.support.v4.app.FragmentManager myFM = getSupportFragmentManager();
-			aMap = ((SupportMapFragment) myFM.findFragmentById(R.id.map)).getMap();
+			aMap = ((SupportMapFragment) myFM.findFragmentById(R.id.map))
+					.getMap();
 			if (AMapUtil.checkReady(this, aMap)) {
 				setUpMap();
 			}
@@ -116,9 +120,7 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		aMap.setMyLocationEnabled(true);// 设置为true表示系统定位按钮显示并响应点击，false表示隐藏，默认是false
 		aMap.getUiSettings().setZoomControlsEnabled(true);// 设置系统默认缩放按钮可见
 		aMap.getUiSettings().setScaleControlsEnabled(true);
-		//aMap.getUiSettings().set
-		
-		
+		// aMap.getUiSettings().set
 	}
 
 	/**
@@ -136,10 +138,13 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		 * 1.0.2版本新增方法，设置true表示混合定位中包含gps定位，false表示纯网络定位，默认是true
 		 */
 		// Location API定位采用GPS和网络混合定位方式，时间最短是5000毫秒
+		
 		mAMapLocationManager.requestLocationUpdates(
 				LocationProviderProxy.AMapNetwork, 5000, 10, this);
-		Toast.makeText(MainActivity.this, "正在定位...", Toast.LENGTH_SHORT).show();
-		
+		if (true == FIRST_LOCATION) {
+			Toast.makeText(MainActivity.this, "正在定位...", Toast.LENGTH_LONG)
+					.show();
+		}
 
 	}
 
@@ -177,28 +182,47 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 
 	@Override
 	public void onLocationChanged(AMapLocation aLocation) {
+		Log.i(TAG, "MainActivityonLocationChanged");
 		currentLocation = aLocation;
-		currentLatLng=new LatLng(aLocation.getLatitude(), aLocation.getLongitude());
+		Declare.setCurrentLatlng(new LatLng(aLocation.getLatitude(),
+				aLocation.getLongitude()));
+		
 		if (mListener != null) {
 			mListener.onLocationChanged(aLocation);
 		}
-		distance = (int)getDistance(new LatLng(currentLocation.getLatitude(),
-				currentLocation.getLongitude()), targetLatLng);
-		//ToastUtil.show(MainActivity.this, "当前位置距目的地" + (int) distance + "米");
-		Log.i(TAG, "距离：" + distance);
-		if(true==FIRST_LOCATION)
-		{
-		CameraPosition currentPosition = new CameraPosition.Builder()
-		.target(currentLatLng).zoom(13).bearing(0).tilt(0)
-		.build();
-		aMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPosition));
+//		distance = (int) AMapUtil.getDistance(
+//				new LatLng(currentLocation.getLatitude(), currentLocation
+//						.getLongitude()), targetLatLng);
+//		// ToastUtil.show(MainActivity.this, "当前位置距目的地" + (int) distance + "米");
+//		Log.i(TAG, "距离：" + distance + " " + isonMapLoaded);
+//		SharedPreferences mPrefs = PreferenceManager
+//				.getDefaultSharedPreferences(MainActivity.this);
+//		int prefsDistance = Integer.parseInt(mPrefs.getString("PREF_DISTANCE",
+//				"0"));
+//		Log.i(TAG, prefsDistance + "");
+//		if (distance > 0 && distance < prefsDistance) {
+//			new AlertDialog.Builder(this).setTitle("请输入")
+//					.setIcon(android.R.drawable.ic_dialog_info)
+//					.setView(new EditText(this)).setPositiveButton("确定", null)
+//					.setNegativeButton("取消", null).show();
+//		}
+		if (true == FIRST_LOCATION) {
+			Log.i(TAG, "FIRST_LOCATION"+FIRST_LOCATION);
+			CameraPosition currentPosition = new CameraPosition.Builder()
+					.target(Declare.getCurrentLatlng()).zoom(14).bearing(0).tilt(0).build();
+			aMap.animateCamera(CameraUpdateFactory
+					.newCameraPosition(currentPosition));
+			FIRST_LOCATION = false;
+			deactivate();
+			startLocationService();
 		}
+
 	}
 
 	@Override
 	public void onMapClick(LatLng targetPoint) {
-		targetLatLng = targetPoint;
-		Log.i(TAG, "msg");
+		tmpTargetLatLng = targetPoint;
+		Log.i(TAG, "onMapClick");
 		if (targetMarker != null) {
 			targetMarker.remove();
 		}
@@ -218,16 +242,25 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 		// TODO Auto-generated method stub
 
 		if (targetMarker.equals(marker)) {
-			getAddress(targetLatLng.latitude, targetLatLng.longitude);
+			
+			Declare.setTargetLatlng(tmpTargetLatLng);
+			Log.i(TAG, "onInfoWindowClick "+tmpTargetLatLng.toString());
+			getAddress(tmpTargetLatLng.latitude, tmpTargetLatLng.longitude);
+			distance = (int) AMapUtil.getDistance(
+					new LatLng(currentLocation.getLatitude(), currentLocation
+							.getLongitude()), tmpTargetLatLng);
+			if (null == targetName) {
+				targetName = "";
+			}
+			Toast.makeText(
+					MainActivity.this,
+					"距离目的地 " + targetName + " " + distance / 1000 + "公里"
+							+ distance % 1000 + "米", Toast.LENGTH_LONG).show();
 
-			mAMapLocationManager.addProximityAlert(targetLatLng.latitude,
-					targetLatLng.longitude, 10000 * radius, -1,
-					startAlarmPendingInetent);
-			Toast.makeText(MainActivity.this, "目的地：" + targetName, Toast.LENGTH_LONG).show();
 		}
 		releaseListener();
 		targetMarker.hideInfoWindow();
-		
+
 	}
 
 	private void registerListener() {
@@ -262,7 +295,7 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 							mLon, 1);
 					if (address != null && address.size() > 0) {
 						Address addres = address.get(address.size() - 1);
-						targetName = address.size() + addres.getAdminArea()
+						targetName = addres.getAdminArea()
 								+ addres.getSubLocality()
 								+ addres.getFeatureName() + "附近";
 
@@ -293,18 +326,6 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 	public View getInfoWindow(Marker arg0) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	// 方法
-	public double getDistance(LatLng latlng1, LatLng latlng2) {
-		float[] results = new float[1];
-		if(null==latlng1||null==latlng2){
-			return -1f;
-		}
-		
-		Location.distanceBetween(latlng1.latitude, latlng1.longitude,
-				latlng2.latitude, latlng2.longitude, results);
-		return results[0];
 	}
 
 	@Override
@@ -364,6 +385,28 @@ public class MainActivity extends FragmentActivity implements LocationSource,
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onMapLoaded() {
+		isonMapLoaded = true;
+	}
+
+	private void startLocationService() {
+		Log.d(TAG, "start alarm");
+		//Intent i = new Intent("com.andy.remind.START_TRACK_SERVICE");
+        //startService(i);
+        
+//		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//		Intent collectIntent = new Intent(this, LocationService.class);
+//		PendingIntent collectSender = PendingIntent.getService(this, 0,
+//				collectIntent, 0);
+//		am.cancel(collectSender);
+//		am.setRepeating(AlarmManager.ELAPSED_REALTIME,
+//				SystemClock.elapsedRealtime(), 10 * 1000, collectSender);
+		Intent intent=new Intent(this,LocationService.class);
+        startService(intent);
+        
 	}
 
 }

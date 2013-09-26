@@ -9,8 +9,24 @@
     tools:context=".ArriveAlarmActivity" >
 
     <TextView
+        android:id="@+id/alarmid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="66dp"
+        android:gravity="center"
+        android:text="@string/alarmText"
+        android:textSize="50sp" />
+
+    <Button
+        android:id="@+id/ISeeId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/alarmid"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="48dp"
+        android:gravity="center"
+        android:text="@string/ISee" />
 
 </RelativeLayout>

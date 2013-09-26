@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -37,10 +39,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.andy.remind.PreferencesActivity"
+            android:name="com.andy.remind.app.PreferencesActivity"
             android:label="Preferences" >
         </activity>
-        <activity android:name="com.andy.remind.FragmentPreferences" />
+        <activity android:name="com.andy.remind.app.FragmentPreferences" />
 
         <service
             android:name="com.baidu.location.f"
@@ -54,10 +56,20 @@
         </activity>
 
         <receiver android:name="com.andy.remind.ArriveAlarmReceiver" >
-            <intent-filter> 
-                <action android:name="com.andy.remind.START_ALARM" /> 
-            </intent-filter> 
+            <intent-filter>
+                <action android:name="com.andy.remind.START_ALARM" />
+            </intent-filter>
         </receiver>
+
+        <activity
+            android:name="com.andy.remind.DistancePickerActivity"
+            android:label="@string/title_activity_distance_picker" >
+        </activity>
+
+	<service 
+	        android:name="com.andy.remind.service.LocationService"
+	        android:enabled="true"
+	    ></service>
     </application>
 
 </manifest>

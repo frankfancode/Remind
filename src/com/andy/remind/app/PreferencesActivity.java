@@ -1,22 +1,27 @@
-package com.andy.remind;
+package com.andy.remind.app;
 
-import android.app.Activity;
+import com.andy.remind.R;
+import com.andy.remind.R.id;
+import com.andy.remind.R.layout;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.SeekBar;
 
-public class PreferencesActivity extends Activity implements
+public class PreferencesActivity extends FragmentActivity implements
 		SharedPreferences.OnSharedPreferenceChangeListener {
 
 	public static final String PREF_VIBRATE = "PREF_VIBRATE";
 	public static final String PREF_VOLUME = "PREF_VOLUME";
+	public static int REMIND_DISTANCE=500;
 
 	private CheckBox vibrate;
 	private SeekBar volume;
@@ -36,6 +41,19 @@ public class PreferencesActivity extends Activity implements
 		Context context = getApplicationContext();
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		updateUIFromPreferences();
+		
+		Button remindDistance=(Button)findViewById(R.id.remind_distance);
+		remindDistance.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				  
+				
+			}
+		});
+		
+		
 
 		okButton = (Button) findViewById(R.id.okButton);
 		cancelButton = (Button) findViewById(R.id.cancelButton);
